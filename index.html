@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Onde Tem? - Agendamento de Serviços Estéticos</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#d93d3d">
+</head>
+<body>
+
+  <header class="bg-white py-3 border-bottom sticky-top d-none d-md-block">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="logo d-flex align-items-center">
+        <i class="bi bi-b-circle-fill fs-2 text-danger me-2"></i>
+        <span class="fs-4 fw-bold text-dark">Onde tem?</span>
+      </div>
+      <div class="search-bar w-50">
+        <input type="search" class="form-control rounded-pill" placeholder="Busque por serviços ou profissionais">
+      </div>
+      <div class="header-action">
+        <button class="btn btn-danger rounded-pill px-4">Agendar em cliques</button>
+      </div>
+    </div>
+  </header>
+
+  <header class="bg-white py-2 border-bottom d-md-none sticky-top">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div class="logo d-flex align-items-center">
+            <i class="bi bi-b-circle-fill fs-2 text-danger me-2"></i>
+            <span class="fs-4 fw-bold text-dark">Onde tem?</span>
+          </div>
+      <div class="search-icon fs-3 text-muted">
+          <i class="bi bi-search"></i>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero bg-light py-5">
+    <div class="container text-center text-md-start position-relative">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-6 fw-bold">Seu momento de beleza,</h1>
+                <h1 class="display-6 fw-bold">agendado em cliques.</h1>
+                <p class="lead text-muted d-none d-md-block">Encontre os melhores profissionais perto de você.</p>
+            </div>
+            <div class="col-md-4 position-relative d-none d-md-block">
+            
+        </div>
+    </div>
+  </section>
+
+  <section class="categories py-4 bg-white">
+    <div class="container">
+      <div class="categories-wrapper">
+        <div class="category-item text-center">
+          <div class="icon-circle shadow"><i class="bi bi-scissors"></i></div>
+          <p>Cabelo</p>
+        </div>
+        <div class="category-item text-center">
+          <div class="icon-circle shadow"><i class="bi bi-hand-index-thumb"></i></div>
+          <p>Unhas</p>
+        </div>
+        <div class="category-item text-center">
+          <div class="icon-circle shadow"><i class="bi bi-gender-female"></i></div>
+          <p>Depilação</p>
+        </div>
+        <div class="category-item text-center">
+          <div class="icon-circle shadow"><i class="bi bi-eye"></i></div>
+          <p>Sobrancelhas</p>
+        </div>
+        <div class="category-item text-center">
+          <div class="icon-circle shadow"><i class="bi bi-person-hearts"></i></div>
+          <p>Massagem</p>
+        </div>
+        <div class="category-item text-center">
+          <div class="icon-circle shadow"><i class="bi bi-person-fill"></i></div>
+          <p>Rosto</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="listings py-5 bg-light">
+    <div class="container">
+      <h2 class="mb-4">Salões e Clínicas em Destaque</h2>
+      <div class="row g-4">
+        
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card service-card shadow h-100">
+            <img src="https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp" class="card-img-top" alt="Studio Bella Donna">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">Studio Bella Donna</h5>
+                <span class="text-muted fs-6">4.8 <i class="bi bi-star-fill text-warning"></i> (220 m)</span>
+              </div>
+              <p class="card-text text-muted mb-3">Cabelo • Unhas • Sobrancelhas</p>
+              <div class="services-list mb-3">
+                <p>Corte Feminino • R$ 120,00</p>
+                <p>Manicure Simples • R$ 35,00</p>
+              </div>
+              <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card service-card shadow h-100">
+            <img src="https://s2.glbimg.com/Ha2q-YYa3pCWtwM4E51zi_p-POI=/940x523/e.glbimg.com/og/ed/f/original/2019/02/20/blow-dry-bar-del-mar-chairs-counter-853427.jpg" class="card-img-top" alt="Clínica Estética Flores">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="card-title mb-0">Clínica Estética Flores</h5>
+                <span class="text-muted fs-6">4.9 <i class="bi bi-star-fill text-warning"></i> (1.1 km)</span>
+              </div>
+              <p class="card-text text-muted mb-3">Rosto • Depilação • Massagem</p>
+              <div class="services-list mb-3">
+                <p>Limpeza de Pele • R$ 150,00</p>
+                <p>Drenagem Linfática • R$ 180,00</p>
+              </div>
+              <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card service-card shadow h-100">
+              <img src="https://ferrante.com.br/wp-content/uploads/2024/11/decoracao-minimalista-salao.jpg.jpeg" class="card-img-top" alt="Espaço Glow">
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="card-title mb-0">Espaço Glow</h5>
+                  <span class="text-muted fs-6">4.7 <i class="bi bi-star-fill text-warning"></i> (500 m)</span>
+                </div>
+                <p class="card-text text-muted mb-3">Unhas • Sobrancelhas • Rosto</p>
+                <div class="services-list mb-3">
+                  <p>Design de Sobrancelhas • R$ 60,00</p>
+                  <p>Alongamento em Gel • R$ 160,00</p>
+                </div>
+                <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
+              </div>
+            </div>
+          </div>
+
+      </div>
+    </div>
+  </section>
+
+  <nav class="fixed-bottom bg-white d-md-none border-top py-2 bottom-nav">
+    <div class="container-fluid d-flex justify-content-around text-center">
+      <a href="#" class="nav-link-custom text-danger">
+          <i class="bi bi-house-door-fill fs-4"></i>
+          <span class="small d-block">Início</span>
+      </a>
+      <a href="#" class="nav-link-custom text-muted">
+          <i class="bi bi-search fs-4"></i>
+          <span class="small d-block">Buscar</span>
+      </a>
+      <a href="#" class="nav-link-custom text-muted">
+          <i class="bi bi-calendar-check fs-4"></i>
+          <span class="small d-block">Agendamentos</span>
+      </a>
+      <a href="#" class="nav-link-custom text-muted">
+          <i class="bi bi-person fs-4"></i>
+          <span class="small d-block">Perfil</span>
+      </a>
+    </div>
+  </nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script src="script.js"></script>
+</body>
+</html>

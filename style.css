@@ -1,0 +1,115 @@
+/* style.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    padding-bottom: 70px; /* Espaço para a barra inferior no mobile */
+}
+
+/* Cores do Design */
+.btn-danger {
+    background-color: #553A73; /* Vermelho principal */
+    border-color: #553A73;
+}
+.btn-danger:hover {
+    background-color: #553A73;
+    border-color: #553A73;
+}
+.text-danger {
+    color: #553A73 !important;
+}
+
+/* Estilo do Header */
+.logo span {
+    color: #333;
+}
+
+/* Estilo do Banner/Hero */
+.hero-mockup {
+    position: absolute;
+    top: -50px;
+    right: 50px;
+    width: 160px;
+    height: 280px;
+    background: #333; /* Cor do corpo do celular */
+    border-radius: 20px;
+    padding: 10px;
+    transform: rotate(10deg);
+}
+.mockup-screen {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo das Categorias (Bolinhas) */
+.categories-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow-x: auto; /* Permite scroll horizontal no mobile */
+    padding-bottom: 10px;
+}
+
+.category-item {
+    flex: 0 0 auto;
+    width: 100px;
+    cursor: pointer;
+}
+
+.icon-circle {
+    width: 70px;
+    height: 70px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 10px;
+    font-size: 1.8rem;
+    color: #553A73; /* Roxo principal */
+    transition: transform 0.2s;
+}
+
+.category-item:hover .icon-circle {
+    transform: scale(1.1);
+}
+
+.category-item p {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0;
+}
+
+/* Estilo dos Cards de Serviço */
+.service-card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+}
+.service-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15) !important;
+}
+.service-card .card-img-top {
+    height: 180px;
+    object-fit: cover;
+}
+.services-list p {
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+}
+
+/* Ajustes Mobile */
+@media (max-width: 768px) {
+    .categories-wrapper {
+        justify-content: flex-start;
+        padding-left: 15px;
+    }
+    .category-item {
+        margin-right: 15px;
+    }
+}
