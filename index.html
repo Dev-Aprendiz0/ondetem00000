@@ -94,67 +94,75 @@
     </div>
   </section>
 
-  <section class="listings py-5 bg-light">
-    <div class="container">
-      <h2 class="mb-4">Salões e Clínicas em Destaque</h2>
-      <div class="row g-4">
-        
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="card service-card shadow h-100">
-            <img src="https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp" class="card-img-top" alt="Studio Bella Donna">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="card-title mb-0">Studio Bella Donna</h5>
-                <span class="text-muted fs-6">4.8 <i class="bi bi-star-fill text-warning"></i> (220 m)</span>
-              </div>
-              <p class="card-text text-muted mb-3">Cabelo • Unhas • Sobrancelhas</p>
-              <div class="services-list mb-3">
-                <p>Corte Feminino • R$ 120,00</p>
-                <p>Manicure Simples • R$ 35,00</p>
-              </div>
+<section class="listings py-5 bg-light">
+  <div class="container">
+    <h2 class="mb-4">Salões e Clínicas em Destaque</h2>
+    <div class="row g-4 flex-nowrap overflow-auto pb-3">
+      
+      <div class="col-10 col-md-6 col-lg-4 card-salao" data-index="0">
+        <div class="card service-card shadow h-100">
+          <img src="https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp" class="card-img-top" alt="Studio Bella Donna" style="height: 200px; object-fit: cover;">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="card-title mb-0">Studio Bella Donna</h5>
+              <span class="text-muted fs-6">4.8 <i class="bi bi-star-fill text-warning"></i> (220 m)</span>
+            </div>
+            <p class="card-text text-muted mb-3">Cabelo • Unhas • Sobrancelhas</p>
+            <div class="services-list mb-3">
+              <p>Corte Feminino • R$ 120,00</p>
+              <p>Manicure Simples • R$ 35,00</p>
+            </div>
+            <div class="mt-auto">
               <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
             </div>
           </div>
         </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="card service-card shadow h-100">
-            <img src="https://s2.glbimg.com/Ha2q-YYa3pCWtwM4E51zi_p-POI=/940x523/e.glbimg.com/og/ed/f/original/2019/02/20/blow-dry-bar-del-mar-chairs-counter-853427.jpg" class="card-img-top" alt="Clínica Estética Flores">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <h5 class="card-title mb-0">Clínica Estética Flores</h5>
-                <span class="text-muted fs-6">4.9 <i class="bi bi-star-fill text-warning"></i> (1.1 km)</span>
-              </div>
-              <p class="card-text text-muted mb-3">Rosto • Depilação • Massagem</p>
-              <div class="services-list mb-3">
-                <p>Limpeza de Pele • R$ 150,00</p>
-                <p>Drenagem Linfática • R$ 180,00</p>
-              </div>
-              <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-            <div class="card service-card shadow h-100">
-              <img src="https://ferrante.com.br/wp-content/uploads/2024/11/decoracao-minimalista-salao.jpg.jpeg" class="card-img-top" alt="Espaço Glow">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <h5 class="card-title mb-0">Espaço Glow</h5>
-                  <span class="text-muted fs-6">4.7 <i class="bi bi-star-fill text-warning"></i> (500 m)</span>
-                </div>
-                <p class="card-text text-muted mb-3">Unhas • Sobrancelhas • Rosto</p>
-                <div class="services-list mb-3">
-                  <p>Design de Sobrancelhas • R$ 60,00</p>
-                  <p>Alongamento em Gel • R$ 160,00</p>
-                </div>
-                <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
-              </div>
-            </div>
-          </div>
-
       </div>
+
+      <div class="col-10 col-md-6 col-lg-4 card-salao" data-index="1">
+        <div class="card service-card shadow h-100">
+          <img src="https://s2.glbimg.com/Ha2q-YYa3pCWtwM4E51zi_p-POI=/940x523/e.glbimg.com/og/ed/f/original/2019/02/20/blow-dry-bar-del-mar-chairs-counter-853427.jpg" class="card-img-top" alt="Clínica Estética Flores" style="height: 200px; object-fit: cover;">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="card-title mb-0">Clínica Estética Flores</h5>
+              <span class="text-muted fs-6">4.9 <i class="bi bi-star-fill text-warning"></i> (1.1 km)</span>
+            </div>
+            <p class="card-text text-muted mb-3">Rosto • Depilação • Massagem</p>
+            <div class="services-list mb-3">
+              <p>Limpeza de Pele • R$ 150,00</p>
+              <p>Drenagem Linfática • R$ 180,00</p>
+            </div>
+            <div class="mt-auto">
+              <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-10 col-md-6 col-lg-4 card-salao" data-index="2">
+        <div class="card service-card shadow h-100">
+          <img src="https://ferrante.com.br/wp-content/uploads/2024/11/decoracao-minimalista-salao.jpg.jpeg" class="card-img-top" alt="Espaço Glow" style="height: 200px; object-fit: cover;">
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="card-title mb-0">Espaço Glow</h5>
+              <span class="text-muted fs-6">4.7 <i class="bi bi-star-fill text-warning"></i> (500 m)</span>
+            </div>
+            <p class="card-text text-muted mb-3">Unhas • Sobrancelhas • Rosto</p>
+            <div class="services-list mb-3">
+              <p>Design de Sobrancelhas • R$ 60,00</p>
+              <p>Alongamento em Gel • R$ 160,00</p>
+            </div>
+            <div class="mt-auto">
+              <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
+</section>
+
   </section>
   <div class="modal fade" id="modalAgendamento" tabindex="-1" aria-labelledby="modalAgendamentoLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
@@ -222,15 +230,15 @@
   <div id="map"></div>
     <script>
         // 4. Inicializar o mapa (latitude, longitude, zoom)
-        var map = L.map('map').setView([-22.90, -42.02], 13);
-        
+        var map = L.map('map').setView([-22.934554592133573, -42.49510991919519], 13);
+  
         // 5. Adicionar a camada de azulejos (OpenStreetMap)
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
         
         // 6. Adicionar um marcador
-        L.marker([-22.90259571044483, -42.471591900326096]).addTo(map)
+        L.marker([-22.934554592133573, -42.49510991919519]).addTo(map)
             .bindPopup('Saquarema, Brasil')
             .openPopup();
     </script>
