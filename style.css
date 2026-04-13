@@ -127,3 +127,11 @@ body {
     width: 150px; /* Ajuste o tamanho conforme sua preferência */
     display: block !important;
 }
+
+/* Classe de destaque para o card selecionado via mapa */
+.card-ativo-mapa {
+    border: 2px solid #553A73 !important;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(217, 61, 61, 0.2) !important;
+}

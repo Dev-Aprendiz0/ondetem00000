@@ -105,17 +105,13 @@
       
       <div class="col-10 col-md-6 col-lg-4 card-salao" data-index="0">
         <div class="card service-card shadow h-100">
-          <img src="https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp" class="card-img-top" alt="Studio Bella Donna" style="height: 200px; object-fit: cover;">
+          <img src="https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp" class="card-img-top" style="height: 200px; object-fit: cover;">
           <div class="card-body d-flex flex-column">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h5 class="card-title mb-0">Studio Bella Donna</h5>
-              <span class="text-muted fs-6">4.8 <i class="bi bi-star-fill text-warning"></i> (220 m)</span>
+              <span class="text-muted fs-6">4.8 <i class="bi bi-star-fill text-warning"></i> (<span id="dist-0">calculando...</span>)</span>
             </div>
             <p class="card-text text-muted mb-3">Cabelo • Unhas • Sobrancelhas</p>
-            <div class="services-list mb-3">
-              <p>Corte Feminino • R$ 120,00</p>
-              <p>Manicure Simples • R$ 35,00</p>
-            </div>
             <div class="mt-auto">
               <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
             </div>
@@ -125,17 +121,13 @@
 
       <div class="col-10 col-md-6 col-lg-4 card-salao" data-index="1">
         <div class="card service-card shadow h-100">
-          <img src="https://s2.glbimg.com/Ha2q-YYa3pCWtwM4E51zi_p-POI=/940x523/e.glbimg.com/og/ed/f/original/2019/02/20/blow-dry-bar-del-mar-chairs-counter-853427.jpg" class="card-img-top" alt="Clínica Estética Flores" style="height: 200px; object-fit: cover;">
+          <img src="https://s2.glbimg.com/Ha2q-YYa3pCWtwM4E51zi_p-POI=/940x523/e.glbimg.com/og/ed/f/original/2019/02/20/blow-dry-bar-del-mar-chairs-counter-853427.jpg" class="card-img-top" style="height: 200px; object-fit: cover;">
           <div class="card-body d-flex flex-column">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h5 class="card-title mb-0">Clínica Estética Flores</h5>
-              <span class="text-muted fs-6">4.9 <i class="bi bi-star-fill text-warning"></i> (1.1 km)</span>
+              <span class="text-muted fs-6">4.9 <i class="bi bi-star-fill text-warning"></i> (<span id="dist-1">calculando...</span>)</span>
             </div>
             <p class="card-text text-muted mb-3">Rosto • Depilação • Massagem</p>
-            <div class="services-list mb-3">
-              <p>Limpeza de Pele • R$ 150,00</p>
-              <p>Drenagem Linfática • R$ 180,00</p>
-            </div>
             <div class="mt-auto">
               <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
             </div>
@@ -145,17 +137,13 @@
 
       <div class="col-10 col-md-6 col-lg-4 card-salao" data-index="2">
         <div class="card service-card shadow h-100">
-          <img src="https://ferrante.com.br/wp-content/uploads/2024/11/decoracao-minimalista-salao.jpg.jpeg" class="card-img-top" alt="Espaço Glow" style="height: 200px; object-fit: cover;">
+          <img src="https://ferrante.com.br/wp-content/uploads/2024/11/decoracao-minimalista-salao.jpg.jpeg" class="card-img-top" style="height: 200px; object-fit: cover;">
           <div class="card-body d-flex flex-column">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h5 class="card-title mb-0">Espaço Glow</h5>
-              <span class="text-muted fs-6">4.7 <i class="bi bi-star-fill text-warning"></i> (500 m)</span>
+              <span class="text-muted fs-6">4.7 <i class="bi bi-star-fill text-warning"></i> (<span id="dist-2">calculando...</span>)</span>
             </div>
             <p class="card-text text-muted mb-3">Unhas • Sobrancelhas • Rosto</p>
-            <div class="services-list mb-3">
-              <p>Design de Sobrancelhas • R$ 60,00</p>
-              <p>Alongamento em Gel • R$ 160,00</p>
-            </div>
             <div class="mt-auto">
               <button class="btn btn-danger w-100 rounded-pill">Agendar</button>
             </div>
@@ -236,42 +224,8 @@
   </nav>
 
 <!-- Mapa -->   
-
   <div id="map"></div>
-    <script>
-    // 4. Inicializar o mapa (Note que não precisamos de setView agora, o locate fará isso)
-      var map = L.map('map');
-
-    // 5. Adicionar a camada de azulejos (OpenStreetMap)
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(map);
-
-    // 6. FUNÇÃO PARA LOCALIZAR A PESSOA
-    // setView: true -> centraliza o mapa automaticamente ao encontrar
-    // maxZoom: 16 -> define o zoom ideal para ver a rua da pessoa
-      map.locate({ setView: true, maxZoom: 16 });
-
-    // 7. EVENTO: Quando a localização é encontrada
-      map.on('locationfound', function(e) {
-        // Adiciona um marcador na posição da pessoa
-          L.marker(e.latlng).addTo(map)
-              .bindPopup("Você está aqui!")
-              .openPopup();
-        
-        // Opcional: Adicionar um círculo azul ao redor para mostrar a precisão
-          L.circle(e.latlng, e.accuracy).addTo(map);
-      });
-
-    // 8. EVENTO: Caso a pessoa negue o GPS ou ocorra erro
-     map.on('locationerror', function(e) {
-          alert("Não conseguimos obter sua localização. Mostrando Saquarema por padrão.");
-        
-        // Fallback: Se der erro, volta para o centro de Saquarema
-          map.setView([-22.9345, -42.4951], 13);
-      });
-  </script>
-
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="script.js"></script>
   
