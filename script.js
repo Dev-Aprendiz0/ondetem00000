@@ -229,3 +229,4 @@ document.querySelectorAll('.abrir-cadastro').forEach(link => {
         }
     });
 });
+
