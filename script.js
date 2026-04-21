@@ -19,6 +19,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('formAgendamento');
     const statusPagamento = document.getElementById('statusPagamento');
 
+    // Troca entre Modais e força a aba correta
+document.querySelectorAll('.abrir-cadastro').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        // 1. Fecha o modal de login
+        const modalLoginEl = document.getElementById('modalLogin');
+        const modalLoginBS = bootstrap.Modal.getInstance(modalLoginEl);
+        if (modalLoginBS) modalLoginBS.hide();
+
+        // 2. Abre o modal de cadastro
+        const modalCadEl = document.getElementById('modalCadastro');
+        const modalCadBS = new bootstrap.Modal(modalCadEl);
+        modalCadBS.show();
+
+        // 3. Lógica para forçar a aba correta
+        const textoLink = e.target.innerText.toLowerCase();
+        
+        // Pequeno delay para garantir que o modal carregou no DOM antes de trocar a aba
+        setTimeout(() => {
+            let selector = '#cad-usuario-tab'; // Padrão: Cliente
+            
+            if (textoLink.includes('empresa') || textoLink.includes('parceiro')) {
+                selector = 'button[data-bs-target="#cad-empresa"]';
+            } else {
+                selector = 'button[data-bs-target="#cad-usuario"]';
+            }
+
+            const abaAlvo = document.querySelector(selector);
+            if (abaAlvo) {
+                const tab = new bootstrap.Tab(abaAlvo);
+                tab.show();
+            }
+        }, 150);
+    });
+});
+
     // --- CONFIGURAÇÕES DO MAPA ---
     // Inicializa o mapa focado em Saquarema (Fallback)
     const map = L.map('map', { zoomControl: false }).setView([-22.9345, -42.4951], 14);
