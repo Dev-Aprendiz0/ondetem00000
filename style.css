@@ -203,3 +203,24 @@ html, body {
     color: #333;
 }
 
+#btn-subscribe {
+  background-color: #007EBD;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+#btn-subscribe:hover {
+  opacity: 0.85;
+}
+
+#btn-subscribe:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+

@@ -230,3 +230,36 @@ document.querySelectorAll('.abrir-cadastro').forEach(link => {
     });
 });
 
+// Aguarda o DOM carregar para garantir que o botão exista
+document.addEventListener('DOMContentLoaded', () => {
+    const btnNotificacao = document.getElementById('btn-notificacao');
+    const badge = document.getElementById('badge-notificacao');
+
+    // Verifica se já existe permissão concedida ao carregar a página
+    if (Notification.permission === 'granted') {
+        badge.classList.remove('d-none');
+    }
+
+    btnNotificacao.addEventListener('click', async () => {
+        // 1. Verificação de suporte
+        if (!('Notification' in window)) {
+            alert('Este navegador não suporta notificações.');
+            return;
+        }
+
+        // 2. Solicitação de permissão
+        const permissao = await Notification.requestPermission();
+
+        if (permissao === 'granted') {
+            alert('As notificações foram ativadas com sucesso!');
+            badge.classList.remove('d-none'); // Mostra a bolinha verde
+            
+            // Aqui você chamaria a função para salvar a inscrição no seu banco futuramente
+            console.log('Permissão concedida pelo usuário.');
+        } else if (permissao === 'denied') {
+            alert('Você bloqueou as notificações. Para ativar, altere as configurações do navegador.');
+        }
+    });
+});
+
+

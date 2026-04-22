@@ -35,3 +35,24 @@ self.addEventListener('fetch', event => {
       })
   );
 });
+
+self.addEventListener('push', event => {
+  const dados = event.data?.json() ?? {
+    title: 'Nova Notificação',
+    body: 'Você tem uma mensagem!',
+    icon: '/icons/icon-192x192.png'
+  };
+  event.waitUntil(
+    self.registration.showNotification(dados.title, {
+      body: dados.body,
+      icon: dados.icon,
+      badge: '/icons/icon-72x72.png'
+    })
+  );
+});
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow('/')
+  );
+});
