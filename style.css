@@ -222,5 +222,13 @@ html, body {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+/* Ajuste para o dropdown do usuário no header */
+.dropdown-toggle::after {
+    vertical-align: middle;
+    margin-left: 8px;
+}
 
+.dropdown-item:active {
+    background-color: #553A73; /* Mantendo seu roxo principal */
+}
 

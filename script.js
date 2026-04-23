@@ -12,71 +12,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnLupaMobile = document.getElementById('btn-lupa-mobile');
     const inputMobile = document.getElementById('input-busca-mobile');
     const inputDesktop = document.querySelector('.search-bar input'); 
-    const cardsElements = document.querySelectorAll('.card-salao'); // Ajustado para a classe correta dos seus cards
     
     const modalElement = document.getElementById('modalAgendamento');
-    const bModal = new bootstrap.Modal(modalElement);
-    const form = document.getElementById('formAgendamento');
+    const bModal = modalElement ? new bootstrap.Modal(modalElement) : null;
+    const formAgendamento = document.getElementById('formAgendamento');
     const statusPagamento = document.getElementById('statusPagamento');
 
     // Troca entre Modais e força a aba correta
-document.querySelectorAll('.abrir-cadastro').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // 1. Fecha o modal de login
-        const modalLoginEl = document.getElementById('modalLogin');
-        const modalLoginBS = bootstrap.Modal.getInstance(modalLoginEl);
-        if (modalLoginBS) modalLoginBS.hide();
+    document.querySelectorAll('.abrir-cadastro').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modalLoginEl = document.getElementById('modalLogin');
+            const modalLoginBS = bootstrap.Modal.getInstance(modalLoginEl);
+            if (modalLoginBS) modalLoginBS.hide();
 
-        // 2. Abre o modal de cadastro
-        const modalCadEl = document.getElementById('modalCadastro');
-        const modalCadBS = new bootstrap.Modal(modalCadEl);
-        modalCadBS.show();
+            const modalCadEl = document.getElementById('modalCadastro');
+            const modalCadBS = new bootstrap.Modal(modalCadEl);
+            modalCadBS.show();
 
-        // 3. Lógica para forçar a aba correta
-        const textoLink = e.target.innerText.toLowerCase();
-        
-        // Pequeno delay para garantir que o modal carregou no DOM antes de trocar a aba
-        setTimeout(() => {
-            let selector = '#cad-usuario-tab'; // Padrão: Cliente
-            
-            if (textoLink.includes('empresa') || textoLink.includes('parceiro')) {
-                selector = 'button[data-bs-target="#cad-empresa"]';
-            } else {
-                selector = 'button[data-bs-target="#cad-usuario"]';
-            }
-
-            const abaAlvo = document.querySelector(selector);
-            if (abaAlvo) {
-                const tab = new bootstrap.Tab(abaAlvo);
-                tab.show();
-            }
-        }, 150);
+            const textoLink = e.target.innerText.toLowerCase();
+            setTimeout(() => {
+                let selector = '#cad-usuario-tab';
+                if (textoLink.includes('empresa') || textoLink.includes('parceiro')) {
+                    selector = 'button[data-bs-target="#cad-empresa"]';
+                } else {
+                    selector = 'button[data-bs-target="#cad-usuario"]';
+                }
+                const abaAlvo = document.querySelector(selector);
+                if (abaAlvo) {
+                    const tab = new bootstrap.Tab(abaAlvo);
+                    tab.show();
+                }
+            }, 150);
+        });
     });
-});
 
     // --- CONFIGURAÇÕES DO MAPA ---
-    // Inicializa o mapa focado em Saquarema (Fallback)
     const map = L.map('map', { zoomControl: false }).setView([-22.9345, -42.4951], 14);
-    
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap'
     }).addTo(map);
 
-    // Reposiciona o zoom para a direita (estilo Airbnb)
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Dados dos Comércios
-    const comercios = [
-        { nome: "Studio Bella Donna", lat: -22.901844995221147, lng: -42.474725201148125, preco: "R$ 120" }, 
-        { nome: "Clínica Estética Flores", lat: -22.930476325777267, lng: -42.48981265383228, preco: "R$ 150" },  
-        { nome: "Espaço Glow", lat: -22.888828721719282, lng: -42.467136122927414, preco: "R$ 80" }
-    ];
-
-    const marcadores = [];
-
-    // --- ÍCONES E MARCADORES ---
     const iconeAzul = L.icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -89,32 +67,69 @@ document.querySelectorAll('.abrir-cadastro').forEach(link => {
         iconSize: [25, 41], iconAnchor: [12, 41]
     });
 
-    // Criar marcadores iniciais
-    comercios.forEach((local, index) => {
-        const marker = L.marker([local.lat, local.lng], { icon: iconeAzul }).addTo(map);
-        marker.bindPopup(`<b>${local.nome}</b>`);
-        marcadores.push(marker);
+    // --- CARREGAMENTO DINÂMICO DE SALÕES ---
+    const saloesIniciais = [
+        { nome: "Studio Bella Donna", email: "ficticio1@email.com", lat: -22.901844995221147, lng: -42.474725201148125, servicos: "Cabelo • Unhas • Sobrancelhas", img: "https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp" },
+        { nome: "Clínica Estética Flores", email: "ficticio2@email.com", lat: -22.930476325777267, lng: -42.48981265383228, servicos: "Rosto • Depilação • Massagem", img: "https://s2.glbimg.com/Ha2q-YYa3pCWtwM4E51zi_p-POI=/940x523/e.glbimg.com/og/ed/f/original/2019/02/20/blow-dry-bar-del-mar-chairs-counter-853427.jpg" },
+        { nome: "Espaço Glow", email: "ficticio3@email.com", lat: -22.888828721719282, lng: -42.467136122927414, servicos: "Unhas • Sobrancelhas • Rosto", img: "https://ferrante.com.br/wp-content/uploads/2024/11/decoracao-minimalista-salao.jpg.jpeg" }
+    ];
 
-        // Evento: Clicar no marcador do mapa foca o card
-        marker.on('click', function() {
-            selecionarSalao(index);
-            this.openPopup();
+    const bancoUsuarios = JSON.parse(localStorage.getItem('usuarios_pwa')) || [];
+    const novosSaloes = bancoUsuarios.filter(u => u.tipo === 'empresa' && u.lat && u.lng);
+    const todosSaloes = [...saloesIniciais];
+
+    novosSaloes.forEach(emp => {
+        todosSaloes.push({
+            nome: emp.nomeFantasia,
+            email: emp.email,
+            lat: emp.lat,
+            lng: emp.lng,
+            servicos: "Novo Parceiro • Saquarema",
+            img: "https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp",
+            isNovo: true
         });
     });
 
-    // --- FUNÇÃO DE SELEÇÃO E SINCRONIA ---
+    const marcadores = [];
+    const containerCards = document.getElementById('container-cards');
+
+    if (containerCards) {
+        containerCards.innerHTML = ""; 
+        todosSaloes.forEach((salao, index) => {
+            const cardHTML = `
+                <div class="col-12 col-xl-6 card-salao" data-index="${index}">
+                    <div class="card service-card shadow-sm h-100 border-0">
+                        <img src="${salao.img}" class="card-img-top rounded-4">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="card-title mb-0 fw-bold">${salao.nome}</h6>
+                                <span class="small fw-bold"><i class="bi bi-star-fill text-warning"></i> ${salao.isNovo ? '5.0' : '4.8'} (<span id="dist-${index}">...</span>)</span>
+                            </div>
+                            <p class="card-text text-muted small mb-3">${salao.servicos}</p>
+                            <div class="mt-auto">
+                                <button class="btn btn-danger w-100 rounded-pill btn-agendar-real" data-email="${salao.email}" data-nome="${salao.nome}">Agendar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            containerCards.insertAdjacentHTML('beforeend', cardHTML);
+            const marker = L.marker([salao.lat, salao.lng], { icon: iconeAzul }).addTo(map);
+            marker.bindPopup(`<b>${salao.nome}</b>`);
+            marcadores.push(marker);
+            marker.on('click', () => selecionarSalao(index));
+        });
+    }
+
     function selecionarSalao(indexAtivo) {
+        const cardsElements = document.querySelectorAll('.card-salao');
         marcadores.forEach((m, i) => {
             const card = cardsElements[i];
             if (!card) return;
-
             if (i === indexAtivo) {
                 m.setIcon(iconeVermelho);
                 m.setZIndexOffset(1000);
                 map.flyTo(m.getLatLng(), 15, { duration: 1 });
-
                 card.querySelector('.card').classList.add('card-ativo-mapa');
-                card.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
             } else {
                 m.setIcon(iconeAzul);
                 m.setZIndexOffset(0);
@@ -123,48 +138,33 @@ document.querySelectorAll('.abrir-cadastro').forEach(link => {
         });
     }
 
-    // Eventos nos Cards
-    cardsElements.forEach((card, index) => {
-        // No PC: Ao passar o mouse
-        card.addEventListener('mouseenter', () => {
-            if (window.innerWidth > 768) selecionarSalao(index);
-        });
-        
-        // No Mobile: Ao clicar (exceto no botão agendar)
-        card.addEventListener('click', (e) => {
-            if (!e.target.classList.contains('btn-danger')) {
-                selecionarSalao(index);
-            }
-        });
+    document.addEventListener('mouseover', (e) => {
+        const card = e.target.closest('.card-salao');
+        if (card && window.innerWidth > 768) {
+            const index = card.getAttribute('data-index');
+            selecionarSalao(parseInt(index));
+        }
     });
 
     // --- GEOLOCALIZAÇÃO ---
     map.locate({ setView: true, maxZoom: 15 });
-
     map.on('locationfound', (e) => {
         L.marker(e.latlng).addTo(map).bindPopup("<b>Você está aqui!</b>").openPopup();
         L.circle(e.latlng, { radius: e.accuracy, color: '#d93d3d', fillOpacity: 0.1 }).addTo(map);
 
-        // Atualiza distâncias reais nos cards
-        comercios.forEach((local, index) => {
+        todosSaloes.forEach((local, index) => {
             const pontoComercio = L.latLng(local.lat, local.lng);
             const dist = e.latlng.distanceTo(pontoComercio);
-            
             let textoDistancia = dist >= 1000 ? (dist / 1000).toFixed(1) + " km" : Math.round(dist) + " m";
             const el = document.getElementById(`dist-${index}`);
             if (el) el.innerText = textoDistancia;
         });
     });
 
-    map.on('locationerror', () => {
-        console.log("Localização negada.");
-        map.setView([-22.9345, -42.4951], 13);
-    });
-
     // --- LÓGICA DE BUSCA ---
     function filtrarCards(termo) {
         const searchTerm = termo.toLowerCase();
-        cardsElements.forEach(cardDiv => {
+        document.querySelectorAll('.card-salao').forEach(cardDiv => {
             const title = cardDiv.querySelector('.card-title').innerText.toLowerCase();
             const services = cardDiv.querySelector('.card-text').innerText.toLowerCase();
             cardDiv.style.display = (title.includes(searchTerm) || services.includes(searchTerm)) ? "block" : "none";
@@ -182,84 +182,173 @@ document.querySelectorAll('.abrir-cadastro').forEach(link => {
         });
     }
 
-    // --- LÓGICA DO MODAL E AGENDAMENTO ---
+    // --- AGENDAMENTO DINÂMICO ---
     document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('btn-danger') && e.target.closest('.card-body')) {
-            const nomeLocal = e.target.closest('.card-body').querySelector('.card-title').innerText;
-            document.getElementById('modalAgendamentoLabel').innerText = `Agendar em: ${nomeLocal}`;
-            bModal.show();
+        if (e.target.classList.contains('btn-agendar-real')) {
+            const email = e.target.getAttribute('data-email');
+            const nome = e.target.getAttribute('data-nome');
+            const agenda = JSON.parse(localStorage.getItem(`agenda_${email}`)) || {};
+            
+            const modalLabel = document.getElementById('modalAgendamentoLabel');
+            if(modalLabel) modalLabel.innerText = `Agendar em: ${nome}`;
+
+            const selectHora = document.getElementById('horaAgendamento');
+            if(selectHora) {
+                selectHora.innerHTML = '<option value="">Selecione um horário...</option>';
+                const diasSemana = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+                const hoje = diasSemana[new Date().getDay()];
+                const slots = agenda[hoje] || [];
+
+                slots.forEach(s => {
+                    if (!s.ocupado) selectHora.innerHTML += `<option value="${s.hora}">${s.hora}</option>`;
+                });
+
+                if (slots.length === 0) {
+                    ['09:00', '10:00', '14:00', '16:00'].forEach(h => selectHora.innerHTML += `<option>${h}</option>`);
+                }
+            }
+            if(bModal) bModal.show();
         }
     });
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btnSubmit = form.querySelector('button[type="submit"]');
-        btnSubmit.disabled = true;
-        btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
-        
-        const dadosAgendamento = {
-            local: document.getElementById('modalAgendamentoLabel').innerText,
-            data: document.getElementById('dataAgendamento').value,
-            hora: document.getElementById('horaAgendamento').value,
-            pagamento: document.getElementById('metodoPagamento').value
-        };
-
-        try {
-            const resposta = await fetch('https://jsonplaceholder.typicode.com/posts', {
-                method: 'POST',
-                body: JSON.stringify(dadosAgendamento),
-                headers: { 'Content-type': 'application/json; charset=UTF-8' }
-            });
-
-            if(resposta.ok) {
+    if(formAgendamento) {
+        formAgendamento.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSubmit = formAgendamento.querySelector('button[type="submit"]');
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
+            
+            setTimeout(() => {
                 statusPagamento.innerHTML = '<b class="text-success">Pagamento Aprovado!</b>';
                 setTimeout(() => {
-                    bModal.hide();
-                    form.reset();
+                    if(bModal) bModal.hide();
+                    formAgendamento.reset();
                     statusPagamento.innerHTML = '';
                     btnSubmit.disabled = false;
                     btnSubmit.innerText = 'Confirmar e Pagar';
                     alert("Sucesso! Agendamento confirmado.");
                 }, 2000);
-            }
-        } catch (erro) {
-            statusPagamento.innerHTML = '<b class="text-danger">Erro no processamento.</b>';
-            btnSubmit.disabled = false;
-            btnSubmit.innerText = 'Confirmar e Pagar';
+            }, 1500);
+        });
+    }
+
+    // --- SISTEMA DE LOGIN E CADASTRO (COM REDIRECIONAMENTO AJUSTADO) ---
+    const salvarLocalmente = (usuario) => {
+        const banco = JSON.parse(localStorage.getItem('usuarios_pwa')) || [];
+        if (banco.find(u => u.email === usuario.email)) return alert("Este e-mail já está cadastrado!");
+        
+        banco.push(usuario);
+        localStorage.setItem('usuarios_pwa', JSON.stringify(banco));
+        localStorage.setItem('usuario_logado', JSON.stringify(usuario));
+        
+        alert("Cadastro realizado com sucesso!");
+        
+        // Regra de Redirecionamento
+        if (usuario.tipo === 'empresa') {
+            window.location.href = 'painel-empresa.html';
+        } else {
+            window.location.reload(); // Cliente fica na página
         }
+    };
+
+    const realizarLogin = (email, senha, tipoDesejado) => {
+        const banco = JSON.parse(localStorage.getItem('usuarios_pwa')) || [];
+        const user = banco.find(u => u.email === email.toLowerCase().trim() && u.senha === senha);
+        
+        if (!user || user.tipo !== tipoDesejado) return alert("E-mail ou senha incorretos.");
+        
+        localStorage.setItem('usuario_logado', JSON.stringify(user));
+
+        // Regra de Redirecionamento
+        if (user.tipo === 'empresa') {
+            window.location.href = 'painel-empresa.html';
+        } else {
+            window.location.reload(); // Cliente fica na página
+        }
+    };
+
+    // Listeners dos formulários
+    const fCadUser = document.getElementById('formCadUsuario');
+    if(fCadUser) fCadUser.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (document.getElementById('cad-senha-usuario').value !== document.getElementById('cad-confirmar-senha-usuario').value) return alert("Senhas não coincidem!");
+        salvarLocalmente({
+            nome: document.getElementById('cad-nome-usuario').value.trim(),
+            sobrenome: document.getElementById('cad-sobrenome-usuario').value.trim(),
+            email: document.getElementById('cad-email-usuario').value.toLowerCase().trim(),
+            senha: document.getElementById('cad-senha-usuario').value,
+            tipo: 'cliente'
+        });
     });
+
+    const fCadEmp = document.getElementById('formCadEmpresa');
+    if(fCadEmp) fCadEmp.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (document.getElementById('cad-senha-empresa').value !== document.getElementById('cad-confirmar-senha-empresa').value) return alert("Senhas não coincidem!");
+        salvarLocalmente({
+            nomeFantasia: document.getElementById('cad-nome-fantasia').value.trim(),
+            razaoSocial: document.getElementById('cad-razao-social').value.trim(),
+            email: document.getElementById('cad-email-empresa').value.toLowerCase().trim(),
+            senha: document.getElementById('cad-senha-empresa').value,
+            tipo: 'empresa'
+        });
+    });
+
+    const fLogUser = document.getElementById('formLoginUsuario');
+    if(fLogUser) fLogUser.addEventListener('submit', (e) => {
+        e.preventDefault();
+        realizarLogin(document.getElementById('login-email-usuario').value, document.getElementById('login-senha-usuario').value, 'cliente');
+    });
+
+    const fLogEmp = document.getElementById('formLoginEmpresa');
+    if(fLogEmp) fLogEmp.addEventListener('submit', (e) => {
+        e.preventDefault();
+        realizarLogin(document.getElementById('login-email-empresa').value, document.getElementById('login-senha-empresa').value, 'empresa');
+    });
+
+    // --- DROPDOWN DE SESSÃO ATIVA ---
+    const sessao = JSON.parse(localStorage.getItem('usuario_logado'));
+    if (sessao) {
+        const headerAction = document.querySelector('.header-action');
+        const btnLoginOriginal = document.querySelector('button[data-bs-target="#modalLogin"]');
+        if (headerAction && btnLoginOriginal) {
+            const nomeExibicao = (sessao.nome || sessao.nomeFantasia).split(' ')[0];
+            headerAction.innerHTML = `
+                <button id="btn-notificacao" class="btn btn-link text-dark position-relative p-0 border-0 me-3">
+                    <i class="bi bi-bell fs-4"></i>
+                    <span id="badge-notificacao" class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle d-none"></span>
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-outline-dark rounded-pill px-3 dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle me-2"></i> ${nomeExibicao}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3">
+                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person me-2"></i>Meu Perfil</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item py-2 text-danger" href="#" id="fazerLogout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+                    </ul>
+                </div>`;
+            document.getElementById('fazerLogout').addEventListener('click', () => {
+                localStorage.removeItem('usuario_logado');
+                window.location.reload();
+            });
+        }
+    }
 });
 
-// Aguarda o DOM carregar para garantir que o botão exista
+// --- NOTIFICAÇÕES ---
 document.addEventListener('DOMContentLoaded', () => {
     const btnNotificacao = document.getElementById('btn-notificacao');
     const badge = document.getElementById('badge-notificacao');
-
-    // Verifica se já existe permissão concedida ao carregar a página
-    if (Notification.permission === 'granted') {
-        badge.classList.remove('d-none');
+    if (Notification.permission === 'granted' && badge) badge.classList.remove('d-none');
+    if (btnNotificacao) {
+        btnNotificacao.addEventListener('click', async () => {
+            if (!('Notification' in window)) return alert('Navegador sem suporte.');
+            const permissao = await Notification.requestPermission();
+            if (permissao === 'granted') {
+                alert('Notificações ativadas!');
+                if(badge) badge.classList.remove('d-none');
+            }
+        });
     }
-
-    btnNotificacao.addEventListener('click', async () => {
-        // 1. Verificação de suporte
-        if (!('Notification' in window)) {
-            alert('Este navegador não suporta notificações.');
-            return;
-        }
-
-        // 2. Solicitação de permissão
-        const permissao = await Notification.requestPermission();
-
-        if (permissao === 'granted') {
-            alert('As notificações foram ativadas com sucesso!');
-            badge.classList.remove('d-none'); // Mostra a bolinha verde
-            
-            // Aqui você chamaria a função para salvar a inscrição no seu banco futuramente
-            console.log('Permissão concedida pelo usuário.');
-        } else if (permissao === 'denied') {
-            alert('Você bloqueou as notificações. Para ativar, altere as configurações do navegador.');
-        }
-    });
 });
-
-

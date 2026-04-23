@@ -180,57 +180,55 @@
       </div>
     </div>
   </div>
+<div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header border-0 pb-0 justify-content-center">
+        <h5 class="fw-bold mt-3">Entrar no Onde Tem?</h5>
+      </div>
+      <div class="modal-body p-4">
+        <ul class="nav nav-pills nav-fill mb-4 bg-light rounded-pill p-1" id="loginTab" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#tab-usuario">Sou Cliente</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#tab-empresa">Sou Empresa</button>
+          </li>
+        </ul>
 
-  <div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4 border-0 shadow-lg">
-        <div class="modal-header border-0 pb-0 justify-content-center">
-          <h5 class="fw-bold mt-3">Entrar no Onde Tem?</h5>
-        </div>
-        <div class="modal-body p-4">
-          <ul class="nav nav-pills nav-fill mb-4 bg-light rounded-pill p-1" id="loginTab" role="tablist">
-            <li class="nav-item">
-              <button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#tab-usuario">Sou Cliente</button>
-            </li>
-            <li class="nav-item">
-              <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#tab-empresa">Sou Empresa</button>
-            </li>
-          </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="tab-usuario">
+            <form id="formLoginUsuario">
+              <input type="email" id="login-email-usuario" class="form-control mb-2 rounded-3" placeholder="E-mail" required>
+              <input type="password" id="login-senha-usuario" class="form-control mb-3 rounded-3" placeholder="Senha" required>
+              <button class="btn btn-danger w-100 rounded-pill mb-3">Entrar como Usuário</button>
+              <p class="text-center small">Não tem conta? <a href="#" class="text-danger fw-bold abrir-cadastro">Cadastre-se agora</a></p>
+            </form>
+          </div>
 
-          <div class="tab-content">
-            <div class="tab-pane fade show active" id="tab-usuario">
-              <form id="formLoginUsuario">
-                <input type="email" class="form-control mb-2 rounded-3" placeholder="E-mail" required>
-                <input type="password" class="form-control mb-3 rounded-3" placeholder="Senha" required>
-                <button class="btn btn-danger w-100 rounded-pill mb-3">Entrar como Usuário</button>
-                <p class="text-center small">Não tem conta? <a href="#" class="text-danger fw-bold abrir-cadastro">Cadastre-se agora</a></p>
-              </form>
-            </div>
-
-            <div class="tab-pane fade" id="tab-empresa">
-              <form id="formLoginEmpresa">
-                <input type="email" class="form-control mb-2 rounded-3" placeholder="E-mail da Empresa" required>
-                <input type="password" class="form-control mb-3 rounded-3" placeholder="Senha" required>
-                <button class="btn btn-dark w-100 rounded-pill mb-3">Acessar Painel da Empresa</button>
-                <p class="text-center small">Quer ser parceiro? <a href="#" class="text-danger fw-bold abrir-cadastro">Cadastrar minha Empresa</a></p>
-              </form>
-            </div>
+          <div class="tab-pane fade" id="tab-empresa">
+            <form id="formLoginEmpresa">
+              <input type="email" id="login-email-empresa" class="form-control mb-2 rounded-3" placeholder="E-mail da Empresa" required>
+              <input type="password" id="login-senha-empresa" class="form-control mb-3 rounded-3" placeholder="Senha" required>
+              <button class="btn btn-dark w-100 rounded-pill mb-3">Acessar Painel da Empresa</button>
+              <p class="text-center small">Quer ser parceiro? <a href="#" class="text-danger fw-bold abrir-cadastro">Cadastrar minha Empresa</a></p>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="modal fade" id="modalCadastro" tabindex="-1" aria-hidden="true">
+</div>
+
+<div class="modal fade" id="modalCadastro" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content rounded-4 border-0 shadow-lg">
-      
       <div class="modal-header border-0 pb-0 pt-3 px-3">
         <h6 class="fw-bold mb-0 ps-1">Crie sua conta no Onde Tem?</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="modal-body p-3 pt-1">
-        
         <ul class="nav nav-pills nav-fill mb-3 bg-light rounded-pill p-1" id="cadastroTab" role="tablist">
           <li class="nav-item">
             <button class="nav-link active rounded-pill py-1" data-bs-toggle="pill" data-bs-target="#cad-usuario" style="font-size: 0.85rem;">Novo Cliente</button>
@@ -242,25 +240,30 @@
 
         <div class="tab-content">
           <div class="tab-pane fade show active" id="cad-usuario">
-            <form id="formCadUsuario" class="row g-2"> <div class="col-md-6">
-                <label class="small fw-bold mb-1">Nome Completo</label>
-                <input type="text" class="form-control form-control-sm rounded-3" placeholder="Ex: André Souza" required>
+            <form id="formCadUsuario" class="row g-2">
+              <div class="col-md-6">
+                <label class="small fw-bold mb-1">Nome</label>
+                <input type="text" id="cad-nome-usuario" class="form-control form-control-sm rounded-3" placeholder="Ex: André" required>
               </div>
               <div class="col-md-6">
+                <label class="small fw-bold mb-1">Sobrenome</label>
+                <input type="text" id="cad-sobrenome-usuario" class="form-control form-control-sm rounded-3" placeholder="Ex: Souza" required>
+              </div>
+              <div class="col-12">
                 <label class="small fw-bold mb-1">Telefone</label>
-                <input type="tel" class="form-control form-control-sm rounded-3" placeholder="(22) 99999-9999">
+                <input type="tel" id="cad-telefone-usuario" class="form-control form-control-sm rounded-3" placeholder="(22) 99999-9999">
               </div>
               <div class="col-12">
                 <label class="small fw-bold mb-1">E-mail</label>
-                <input type="email" class="form-control form-control-sm rounded-3" placeholder="seu@email.com" required>
+                <input type="email" id="cad-email-usuario" class="form-control form-control-sm rounded-3" placeholder="seu@email.com" required>
               </div>
               <div class="col-md-6">
                 <label class="small fw-bold mb-1">Senha</label>
-                <input type="password" class="form-control form-control-sm rounded-3" required>
+                <input type="password" id="cad-senha-usuario" class="form-control form-control-sm rounded-3" required>
               </div>
               <div class="col-md-6">
                 <label class="small fw-bold mb-1">Confirmar Senha</label>
-                <input type="password" class="form-control form-control-sm rounded-3" required>
+                <input type="password" id="cad-confirmar-senha-usuario" class="form-control form-control-sm rounded-3" required>
               </div>
               <div class="col-12 mt-3">
                 <button type="submit" class="btn btn-danger w-100 rounded-pill py-2">Finalizar Cadastro</button>
@@ -270,14 +273,18 @@
 
           <div class="tab-pane fade" id="cad-empresa">
             <form id="formCadEmpresa" class="row g-2">
+              <div class="col-md-6">
+                <label class="small fw-bold mb-1">Nome Fantasia</label>
+                <input type="text" id="cad-nome-fantasia" class="form-control form-control-sm rounded-3" placeholder="Ex: Studio Bella Donna" required>
+              </div>
+              <div class="col-md-6">
+                <label class="small fw-bold mb-1">Razão Social / Nome Completo</label>
+                <input type="text" id="cad-razao-social" class="form-control form-control-sm rounded-3" placeholder="Ex: Bella Donna Ltda" required>
+              </div>
               <div class="col-12">
-                <label class="small fw-bold mb-1">Nome da Empresa</label>
-                <input type="text" id="cad-nome-empresa" class="form-control form-control-sm rounded-3" placeholder="Ex: Studio Bella Donna" required>
-              </div> 
-              <div class="col-12">
-                <label class="small fw-bold mb-1">Telefone</label>
+                <label class="small fw-bold mb-1">Telefone Corporativo</label>
                 <input type="text" id="cad-telefone-empresa" class="form-control form-control-sm rounded-3" placeholder="Ex: (22) 99999-9999" required>
-              </div> 
+              </div>
               <div class="col-12">
                 <label class="small fw-bold mb-1">E-mail Corporativo</label>
                 <input type="email" id="cad-email-empresa" class="form-control form-control-sm rounded-3" placeholder="contato@empresa.com" required>
