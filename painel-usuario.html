@@ -614,6 +614,7 @@ function excluirConta() {
   localStorage.removeItem('usuario_logado');
   localStorage.removeItem(`agendamentos_${sessao.email}`);
   localStorage.removeItem(`favoritos_${sessao.email}`);
+  localStorage.removeItem(`notif_enviadas_${sessao.email}`);
   window.location.href = 'index.html';
 }
 
@@ -708,6 +709,27 @@ function verificarAgendamentosProximos() {
       );
     }
   });
+
+  limparNotificacoesAntigas(sessao.email);
+}
+
+function limparNotificacoesAntigas(email) {
+  const enviadas = JSON.parse(localStorage.getItem(`notif_enviadas_${email}`)) || {};
+  const limite = new Date();
+  limite.setDate(limite.getDate() - 2);
+  let mudou = false;
+
+  Object.keys(enviadas).forEach(chave => {
+    const dataEnvio = new Date(enviadas[chave]);
+    if (dataEnvio < limite) {
+      delete enviadas[chave];
+      mudou = true;
+    }
+  });
+
+  if (mudou) {
+    localStorage.setItem(`notif_enviadas_${email}`, JSON.stringify(enviadas));
+  }
 }
 
 function enviarNotificacao(titulo, corpo, chaveNotif, email) {
