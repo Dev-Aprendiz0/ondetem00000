@@ -353,14 +353,31 @@ document.addEventListener('DOMContentLoaded', () => {
   atualizarEstatisticas();
 });
 
+// ---- UTILITARIO XSS ----
+function escapeHtml(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function sanitizeUrl(url) {
+  if (!url) return '';
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return url;
+  } catch (e) {}
+  return '';
+}
+
 // ---- AGENDAMENTOS ----
 function carregarAgendamentos(filtro) {
   const sessao = JSON.parse(localStorage.getItem('usuario_logado'));
   const agendamentos = JSON.parse(localStorage.getItem(`agendamentos_${sessao.email}`)) || [];
 
-  let lista = agendamentos;
+  let lista = agendamentos.map((ag, idx) => ({ ...ag, _originalIndex: idx }));
   if (filtro && filtro !== 'todos') {
-    lista = agendamentos.filter(a => a.status === filtro);
+    lista = lista.filter(a => a.status === filtro);
   }
 
   const container = document.getElementById('listaAgendamentos');
@@ -377,15 +394,16 @@ function carregarAgendamentos(filtro) {
         <a href="index.html" class="btn btn-primary-custom rounded-pill px-4">Explorar saloes</a>
       </div>`;
   } else {
-    container.innerHTML = lista.map((ag, i) => criarCardAgendamento(ag, i)).join('');
+    container.innerHTML = lista.map(ag => criarCardAgendamento(ag, ag._originalIndex)).join('');
   }
 
-  // Dashboard: proximos agendamentos (confirmados/pendentes)
-  const proximos = agendamentos
+
+  const proximosComIdx = agendamentos
+    .map((ag, idx) => ({ ...ag, _originalIndex: idx }))
     .filter(a => a.status === 'confirmado' || a.status === 'pendente')
     .slice(0, 3);
 
-  if (proximos.length === 0) {
+  if (proximosComIdx.length === 0) {
     dashContainer.innerHTML = `
       <div class="empty-state">
         <i class="bi bi-calendar-x"></i>
@@ -393,7 +411,7 @@ function carregarAgendamentos(filtro) {
         <a href="index.html" class="btn btn-primary-custom rounded-pill btn-sm px-4">Agendar agora</a>
       </div>`;
   } else {
-    dashContainer.innerHTML = proximos.map((ag, i) => criarCardAgendamento(ag, i)).join('');
+    dashContainer.innerHTML = proximosComIdx.map(ag => criarCardAgendamento(ag, ag._originalIndex)).join('');
   }
 }
 
@@ -425,13 +443,13 @@ function criarCardAgendamento(ag, index) {
     <div class="agendamento-item" data-status="${ag.status}">
       <div class="d-flex justify-content-between align-items-start">
         <div>
-          <h6 class="fw-bold mb-1">${ag.salao || 'Salao'}</h6>
+          <h6 class="fw-bold mb-1">${escapeHtml(ag.salao) || 'Salao'}</h6>
           <p class="text-muted small mb-1">
-            <i class="bi bi-calendar3 me-1"></i>${ag.data || '--'}
-            <i class="bi bi-clock ms-2 me-1"></i>${ag.hora || '--'}
+            <i class="bi bi-calendar3 me-1"></i>${escapeHtml(ag.data) || '--'}
+            <i class="bi bi-clock ms-2 me-1"></i>${escapeHtml(ag.hora) || '--'}
           </p>
           <p class="text-muted small mb-0">
-            <i class="bi bi-credit-card me-1"></i>${ag.pagamento || 'Pix'}
+            <i class="bi bi-credit-card me-1"></i>${escapeHtml(ag.pagamento) || 'Pix'}
           </p>
         </div>
         <div class="text-end">
@@ -478,10 +496,10 @@ function carregarFavoritos() {
     container.innerHTML = favoritos.map((fav, i) => `
       <div class="col-12 col-md-6 col-lg-4">
         <div class="favorito-card">
-          <img src="${fav.img || 'https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp'}" alt="${fav.nome}">
+          <img src="${sanitizeUrl(fav.img) || 'https://frizzar.com.br/blog/wp-content/uploads/2025/01/salao-de-beleza-moderno.webp'}" alt="${escapeHtml(fav.nome)}">
           <div class="p-3">
-            <h6 class="fw-bold mb-1">${fav.nome}</h6>
-            <p class="text-muted small mb-2">${fav.servicos || ''}</p>
+            <h6 class="fw-bold mb-1">${escapeHtml(fav.nome)}</h6>
+            <p class="text-muted small mb-2">${escapeHtml(fav.servicos) || ''}</p>
             <div class="d-flex gap-2">
               <a href="index.html" class="btn btn-primary-custom btn-sm rounded-pill flex-fill">Agendar</a>
               <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="removerFavorito(${i})">
