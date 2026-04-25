@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 });
                             }
                         }, 500);
-                    } else if (Notification.permission === 'granted') {
+                    } else if ('Notification' in window && Notification.permission === 'granted') {
                         verificarAgendamentosProximos();
                     }
                 }, 2000);
@@ -480,7 +480,7 @@ function verificarAgendamentosProximos() {
     const agendamentos = JSON.parse(localStorage.getItem(`agendamentos_${sessao.email}`)) || [];
     const notificacoesEnviadas = JSON.parse(localStorage.getItem(`notif_enviadas_${sessao.email}`)) || {};
     const agora = new Date();
-    const hojeStr = agora.toISOString().split('T')[0]; // YYYY-MM-DD
+    const hojeStr = `${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,'0')}-${String(agora.getDate()).padStart(2,'0')}`;
 
     agendamentos.forEach((ag, index) => {
         if (ag.status !== 'confirmado' && ag.status !== 'pendente') return;
