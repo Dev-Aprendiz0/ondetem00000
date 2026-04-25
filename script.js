@@ -106,8 +106,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="small fw-bold"><i class="bi bi-star-fill text-warning"></i> ${salao.isNovo ? '5.0' : '4.8'} (<span id="dist-${index}">...</span>)</span>
                             </div>
                             <p class="card-text text-muted small mb-3">${salao.servicos}</p>
-                            <div class="mt-auto">
-                                <button class="btn btn-danger w-100 rounded-pill btn-agendar-real" data-email="${salao.email}" data-nome="${salao.nome}">Agendar</button>
+                            <div class="mt-auto d-flex gap-2">
+                                <button class="btn btn-danger flex-fill rounded-pill btn-agendar-real" data-email="${salao.email}" data-nome="${salao.nome}">Agendar</button>
+                                <button class="btn btn-outline-danger rounded-pill btn-favoritar" data-nome="${salao.nome}" data-img="${salao.img}" data-servicos="${salao.servicos}" title="Favoritar">
+                                    <i class="bi bi-heart"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -237,6 +240,22 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 statusPagamento.innerHTML = '<b class="text-success">Pagamento Aprovado!</b>';
                 setTimeout(() => {
+                    // Salvar agendamento no localStorage do usuario
+                    const usuarioAtivo = JSON.parse(localStorage.getItem('usuario_logado'));
+                    if (usuarioAtivo && usuarioAtivo.tipo === 'cliente') {
+                        const chave = `agendamentos_${usuarioAtivo.email}`;
+                        const agendamentos = JSON.parse(localStorage.getItem(chave)) || [];
+                        agendamentos.push({
+                            salao: document.getElementById('modalAgendamentoLabel').innerText.replace('Agendar em: ', ''),
+                            data: document.getElementById('dataAgendamento').value,
+                            hora: document.getElementById('horaAgendamento').value,
+                            pagamento: document.getElementById('metodoPagamento').value,
+                            status: 'confirmado',
+                            criadoEm: new Date().toISOString()
+                        });
+                        localStorage.setItem(chave, JSON.stringify(agendamentos));
+                    }
+
                     if(bModal) bModal.hide();
                     formAgendamento.reset();
                     statusPagamento.innerHTML = '';
@@ -245,6 +264,60 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert("Sucesso! Agendamento confirmado.");
                 }, 2000);
             }, 1500);
+        });
+    }
+
+    // --- FAVORITAR SALAO ---
+    document.addEventListener('click', (e) => {
+        const btnFav = e.target.closest('.btn-favoritar');
+        if (!btnFav) return;
+        e.stopPropagation();
+
+        const usuarioAtivo = JSON.parse(localStorage.getItem('usuario_logado'));
+        if (!usuarioAtivo || usuarioAtivo.tipo !== 'cliente') {
+            const modalAviso = new bootstrap.Modal(document.getElementById('modalAvisoLogin'));
+            modalAviso.show();
+            return;
+        }
+
+        const nome = btnFav.getAttribute('data-nome');
+        const img = btnFav.getAttribute('data-img');
+        const servicos = btnFav.getAttribute('data-servicos');
+        const chave = `favoritos_${usuarioAtivo.email}`;
+        const favoritos = JSON.parse(localStorage.getItem(chave)) || [];
+
+        const jaFavoritou = favoritos.findIndex(f => f.nome === nome);
+        const icone = btnFav.querySelector('i');
+
+        if (jaFavoritou >= 0) {
+            favoritos.splice(jaFavoritou, 1);
+            icone.classList.remove('bi-heart-fill');
+            icone.classList.add('bi-heart');
+            btnFav.classList.remove('btn-danger');
+            btnFav.classList.add('btn-outline-danger');
+        } else {
+            favoritos.push({ nome, img, servicos });
+            icone.classList.remove('bi-heart');
+            icone.classList.add('bi-heart-fill');
+            btnFav.classList.remove('btn-outline-danger');
+            btnFav.classList.add('btn-danger');
+        }
+        localStorage.setItem(chave, JSON.stringify(favoritos));
+    });
+
+    // Marcar favoritos ja existentes ao carregar
+    const sessaoFav = JSON.parse(localStorage.getItem('usuario_logado'));
+    if (sessaoFav && sessaoFav.tipo === 'cliente') {
+        const favs = JSON.parse(localStorage.getItem(`favoritos_${sessaoFav.email}`)) || [];
+        document.querySelectorAll('.btn-favoritar').forEach(btn => {
+            const nome = btn.getAttribute('data-nome');
+            if (favs.find(f => f.nome === nome)) {
+                const icone = btn.querySelector('i');
+                icone.classList.remove('bi-heart');
+                icone.classList.add('bi-heart-fill');
+                btn.classList.remove('btn-outline-danger');
+                btn.classList.add('btn-danger');
+            }
         });
     }
 
@@ -339,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <i class="bi bi-person-circle me-2"></i> ${nomeExibicao}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-3">
-                        <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person me-2"></i>Meu Perfil</a></li>
+                        <li><a class="dropdown-item py-2" href="${sessao.tipo === 'empresa' ? 'painel-empresa.html' : 'painel-usuario.html'}"><i class="bi bi-person me-2"></i>Meu Painel</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item py-2 text-danger" href="#" id="fazerLogout"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
                     </ul>
