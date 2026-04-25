@@ -583,16 +583,24 @@ function avaliarForcaSenha(senha) {
   if (!container) return;
   const bars = container.querySelectorAll('.strength-bar');
   const texto = container.querySelector('.strength-text');
-  input.addEventListener('input', () => {
+
+  function resetIndicador() {
     bars.forEach(bar => bar.className = 'strength-bar');
     texto.textContent = '';
     texto.style.color = '';
+  }
+
+  input.addEventListener('input', () => {
+    resetIndicador();
     if (!input.value) return;
     const r = avaliarForcaSenha(input.value);
     for (let i = 0; i < r.nivel && i < bars.length; i++) bars[i].classList.add(r.cor);
     texto.textContent = r.texto;
     texto.style.color = r.textoCor;
   });
+
+  const form = document.getElementById('formAlterarSenha');
+  if (form) form.addEventListener('reset', resetIndicador);
 })();
 
 // ---- PERFIL ----
