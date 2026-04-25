@@ -94,6 +94,15 @@
       text-align: center; padding: 40px 20px; color: #aaa;
     }
     .empty-state i { font-size: 3rem; margin-bottom: 10px; display: block; }
+
+    .password-strength { margin-top: 4px; }
+    .strength-bars { height: 4px; }
+    .strength-bar { flex: 1; height: 4px; border-radius: 2px; background: #e0e0e0; transition: background 0.3s; }
+    .strength-bar.weak { background: #dc3545; }
+    .strength-bar.fair { background: #fd7e14; }
+    .strength-bar.good { background: #ffc107; }
+    .strength-bar.strong { background: #28a745; }
+    .strength-text { font-size: 0.7rem; font-weight: 600; display: block; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -282,6 +291,15 @@
           <div class="col-md-4">
             <label class="form-label small fw-bold">Nova Senha</label>
             <input type="password" id="nova-senha" class="form-control rounded-3" required>
+            <div class="password-strength mt-1">
+              <div class="strength-bars d-flex gap-1">
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+              </div>
+              <small class="strength-text"></small>
+            </div>
           </div>
           <div class="col-md-4">
             <label class="form-label small fw-bold">Confirmar Nova Senha</label>
@@ -543,6 +561,47 @@ function atualizarEstatisticas() {
   document.getElementById('statConfirmados').innerText = agendamentos.filter(a => a.status === 'confirmado').length;
   document.getElementById('statFavoritos').innerText = favoritos.length;
 }
+
+// ---- FORCA DA SENHA ----
+function avaliarForcaSenha(senha) {
+  let pontos = 0;
+  if (senha.length >= 6) pontos++;
+  if (senha.length >= 8) pontos++;
+  if (/[A-Z]/.test(senha) && /[a-z]/.test(senha)) pontos++;
+  if (/\d/.test(senha)) pontos++;
+  if (/[^A-Za-z0-9]/.test(senha)) pontos++;
+  if (pontos <= 1) return { nivel: 1, texto: 'Muito fraca', cor: 'weak', textoCor: '#dc3545' };
+  if (pontos === 2) return { nivel: 2, texto: 'Fraca', cor: 'fair', textoCor: '#fd7e14' };
+  if (pontos === 3) return { nivel: 3, texto: 'Boa', cor: 'good', textoCor: '#ffc107' };
+  return { nivel: 4, texto: 'Forte', cor: 'strong', textoCor: '#28a745' };
+}
+
+(function() {
+  const input = document.getElementById('nova-senha');
+  if (!input) return;
+  const container = input.closest('.col-md-4').querySelector('.password-strength');
+  if (!container) return;
+  const bars = container.querySelectorAll('.strength-bar');
+  const texto = container.querySelector('.strength-text');
+
+  function resetIndicador() {
+    bars.forEach(bar => bar.className = 'strength-bar');
+    texto.textContent = '';
+    texto.style.color = '';
+  }
+
+  input.addEventListener('input', () => {
+    resetIndicador();
+    if (!input.value) return;
+    const r = avaliarForcaSenha(input.value);
+    for (let i = 0; i < r.nivel && i < bars.length; i++) bars[i].classList.add(r.cor);
+    texto.textContent = r.texto;
+    texto.style.color = r.textoCor;
+  });
+
+  const form = document.getElementById('formAlterarSenha');
+  if (form) form.addEventListener('reset', resetIndicador);
+})();
 
 // ---- PERFIL ----
 document.getElementById('formEditarPerfil').addEventListener('submit', (e) => {
