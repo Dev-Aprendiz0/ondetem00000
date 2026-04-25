@@ -7,6 +7,56 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// --- FORCA DA SENHA ---
+function avaliarForcaSenha(senha) {
+    let pontos = 0;
+    if (senha.length >= 6) pontos++;
+    if (senha.length >= 8) pontos++;
+    if (/[A-Z]/.test(senha) && /[a-z]/.test(senha)) pontos++;
+    if (/\d/.test(senha)) pontos++;
+    if (/[^A-Za-z0-9]/.test(senha)) pontos++;
+
+    if (pontos <= 1) return { nivel: 1, texto: 'Muito fraca', cor: 'weak', textoCor: '#dc3545' };
+    if (pontos === 2) return { nivel: 2, texto: 'Fraca', cor: 'fair', textoCor: '#fd7e14' };
+    if (pontos === 3) return { nivel: 3, texto: 'Boa', cor: 'good', textoCor: '#ffc107' };
+    return { nivel: 4, texto: 'Forte', cor: 'strong', textoCor: '#28a745' };
+}
+
+function atualizarIndicadorForca(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    const container = input.closest('.col-md-6').querySelector('.password-strength');
+    if (!container) return;
+
+    const bars = container.querySelectorAll('.strength-bar');
+    const texto = container.querySelector('.strength-text');
+
+    input.addEventListener('input', () => {
+        const senha = input.value;
+
+        bars.forEach(bar => bar.className = 'strength-bar');
+        texto.textContent = '';
+        texto.style.color = '';
+
+        if (!senha) return;
+
+        const resultado = avaliarForcaSenha(senha);
+
+        for (let i = 0; i < resultado.nivel && i < bars.length; i++) {
+            bars[i].classList.add(resultado.cor);
+        }
+
+        texto.textContent = resultado.texto;
+        texto.style.color = resultado.textoCor;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    atualizarIndicadorForca('cad-senha-usuario');
+    atualizarIndicadorForca('cad-senha-empresa');
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- SELEÇÃO DE ELEMENTOS ---
     const btnLupaMobile = document.getElementById('btn-lupa-mobile');
