@@ -171,14 +171,84 @@
             <div class="mb-3">
               <label class="form-label small fw-bold">Forma de Pagamento:</label>
               <select class="form-select" id="metodoPagamento" required>
+                <option value="">Selecione...</option>
                 <option value="pix">Pix</option>
                 <option value="cartao">Cartão de Crédito</option>
                 <option value="local">Pagar no Estabelecimento</option>
               </select>
             </div>
+
+            <!-- Simulacao Pix -->
+            <div id="secaoPix" class="payment-section d-none">
+              <div class="card border-0 bg-light rounded-3 p-3 text-center">
+                <div class="mb-2">
+                  <i class="bi bi-qr-code fs-1 text-success"></i>
+                </div>
+                <canvas id="qrCodePix" width="180" height="180" class="mx-auto mb-2 rounded" style="border: 2px solid #dee2e6;"></canvas>
+                <p class="small fw-bold mb-1 text-success">Escaneie o QR Code para pagar</p>
+                <div class="input-group input-group-sm mb-2">
+                  <input type="text" class="form-control form-control-sm text-center bg-white" id="pixCopiaCola" readonly value="">
+                  <button type="button" class="btn btn-outline-success btn-sm" id="btnCopiarPix" title="Copiar">
+                    <i class="bi bi-clipboard"></i>
+                  </button>
+                </div>
+                <small class="text-muted">Chave Pix simulada - Validade: 30 minutos</small>
+                <div id="timerPix" class="fw-bold text-danger mt-1 small"></div>
+              </div>
+            </div>
+
+            <!-- Simulacao Cartao de Credito -->
+            <div id="secaoCartao" class="payment-section d-none">
+              <div class="card border-0 bg-light rounded-3 p-3">
+                <div class="d-flex align-items-center mb-3">
+                  <i class="bi bi-credit-card-2-front fs-4 me-2" style="color:#553A73;"></i>
+                  <span class="fw-bold small">Dados do Cartão</span>
+                  <span class="ms-auto d-flex gap-1">
+                    <i class="bi bi-credit-card fs-5 text-primary"></i>
+                    <i class="bi bi-credit-card-2-back fs-5 text-warning"></i>
+                  </span>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small mb-1">Número do Cartão</label>
+                  <input type="text" class="form-control form-control-sm rounded-3" id="cartaoNumero" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                </div>
+                <div class="mb-2">
+                  <label class="form-label small mb-1">Nome no Cartão</label>
+                  <input type="text" class="form-control form-control-sm rounded-3" id="cartaoNome" placeholder="Como está no cartão" required>
+                </div>
+                <div class="row g-2 mb-2">
+                  <div class="col-6">
+                    <label class="form-label small mb-1">Validade</label>
+                    <input type="text" class="form-control form-control-sm rounded-3" id="cartaoValidade" placeholder="MM/AA" maxlength="5" required>
+                  </div>
+                  <div class="col-6">
+                    <label class="form-label small mb-1">CVV</label>
+                    <input type="text" class="form-control form-control-sm rounded-3" id="cartaoCvv" placeholder="000" maxlength="4" required>
+                  </div>
+                </div>
+                <div class="mb-0">
+                  <label class="form-label small mb-1">Parcelas</label>
+                  <select class="form-select form-select-sm rounded-3" id="cartaoParcelas">
+                    <option value="1">1x de R$ 80,00 (sem juros)</option>
+                    <option value="2">2x de R$ 40,00 (sem juros)</option>
+                    <option value="3">3x de R$ 27,50 (com juros)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagar no Estabelecimento -->
+            <div id="secaoLocal" class="payment-section d-none">
+              <div class="card border-0 bg-light rounded-3 p-3 text-center">
+                <i class="bi bi-shop fs-1 mb-2" style="color:#553A73;"></i>
+                <p class="fw-bold small mb-1">Pagamento no Local</p>
+                <p class="text-muted small mb-0">Realize o pagamento diretamente no estabelecimento no dia do atendimento. Aceitamos dinheiro, cartão e Pix.</p>
+              </div>
+            </div>
+
             <hr>
             <div id="statusPagamento" class="text-center small mb-2"></div>
-            <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold">Confirmar e Pagar</button>
+            <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold" id="btnConfirmarPagar" disabled>Selecione o pagamento</button>
           </form>
         </div>
       </div>

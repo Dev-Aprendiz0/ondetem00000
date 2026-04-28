@@ -57,6 +57,161 @@ document.addEventListener('DOMContentLoaded', () => {
     atualizarIndicadorForca('cad-senha-empresa');
 });
 
+// --- SIMULACAO DE PAGAMENTO ---
+let timerPixInterval = null;
+
+function gerarChavePix() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let chave = '';
+    for (let i = 0; i < 32; i++) {
+        chave += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return chave;
+}
+
+function desenharQRCode(canvasId, texto) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const size = canvas.width;
+    const cellSize = Math.floor(size / 25);
+    const offset = Math.floor((size - cellSize * 25) / 2);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, size, size);
+
+    // Gerar padrao pseudo-aleatorio baseado no texto
+    const seed = texto.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    function pseudoRandom(i, j) {
+        return ((seed * (i + 1) * 7 + (j + 1) * 13 + i * j * 3) % 100) > 45;
+    }
+
+    ctx.fillStyle = '#000000';
+
+    // Desenhar finder patterns (cantos)
+    function drawFinder(x, y) {
+        for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 7; j++) {
+                if (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4)) {
+                    ctx.fillRect(offset + (x + j) * cellSize, offset + (y + i) * cellSize, cellSize, cellSize);
+                }
+            }
+        }
+    }
+
+    drawFinder(0, 0);
+    drawFinder(18, 0);
+    drawFinder(0, 18);
+
+    // Dados centrais
+    for (let i = 0; i < 25; i++) {
+        for (let j = 0; j < 25; j++) {
+            if (i < 8 && j < 8) continue;
+            if (i < 8 && j > 16) continue;
+            if (i > 16 && j < 8) continue;
+            if (pseudoRandom(i, j)) {
+                ctx.fillRect(offset + j * cellSize, offset + i * cellSize, cellSize, cellSize);
+            }
+        }
+    }
+}
+
+function iniciarTimerPix() {
+    clearInterval(timerPixInterval);
+    let segundos = 30 * 60; // 30 min
+    const timerEl = document.getElementById('timerPix');
+    if (!timerEl) return;
+
+    function atualizar() {
+        const min = Math.floor(segundos / 60);
+        const seg = segundos % 60;
+        timerEl.textContent = `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
+        if (segundos <= 0) {
+            clearInterval(timerPixInterval);
+            timerEl.textContent = 'Expirado';
+        }
+        segundos--;
+    }
+
+    atualizar();
+    timerPixInterval = setInterval(atualizar, 1000);
+}
+
+function formatarNumeroCartao(input) {
+    let valor = input.value.replace(/\D/g, '');
+    valor = valor.substring(0, 16);
+    valor = valor.replace(/(\d{4})(?=\d)/g, '$1 ');
+    input.value = valor;
+}
+
+function formatarValidadeCartao(input) {
+    let valor = input.value.replace(/\D/g, '');
+    valor = valor.substring(0, 4);
+    if (valor.length > 2) {
+        valor = valor.substring(0, 2) + '/' + valor.substring(2);
+    }
+    input.value = valor;
+}
+
+function formatarCvv(input) {
+    input.value = input.value.replace(/\D/g, '').substring(0, 4);
+}
+
+function validarCartao() {
+    const numero = document.getElementById('cartaoNumero');
+    const nome = document.getElementById('cartaoNome');
+    const validade = document.getElementById('cartaoValidade');
+    const cvv = document.getElementById('cartaoCvv');
+    if (!numero || !nome || !validade || !cvv) return false;
+
+    const numLimpo = numero.value.replace(/\s/g, '');
+    if (numLimpo.length < 13) return false;
+    if (nome.value.trim().length < 3) return false;
+    if (!/^\d{2}\/\d{2}$/.test(validade.value)) return false;
+    if (cvv.value.length < 3) return false;
+
+    return true;
+}
+
+function alternarSecaoPagamento(metodo) {
+    document.querySelectorAll('.payment-section').forEach(s => s.classList.add('d-none'));
+    clearInterval(timerPixInterval);
+
+    const btnSubmit = document.getElementById('btnConfirmarPagar');
+    if (!btnSubmit) return;
+
+    // Remover required dos campos do cartao quando nao selecionado
+    ['cartaoNumero', 'cartaoNome', 'cartaoValidade', 'cartaoCvv'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.required = false;
+    });
+
+    if (metodo === 'pix') {
+        document.getElementById('secaoPix').classList.remove('d-none');
+        const chave = gerarChavePix();
+        document.getElementById('pixCopiaCola').value = chave;
+        desenharQRCode('qrCodePix', chave);
+        iniciarTimerPix();
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Confirmar Agendamento';
+    } else if (metodo === 'cartao') {
+        document.getElementById('secaoCartao').classList.remove('d-none');
+        ['cartaoNumero', 'cartaoNome', 'cartaoValidade', 'cartaoCvv'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.required = true;
+        });
+        btnSubmit.disabled = !validarCartao();
+        btnSubmit.textContent = 'Pagar com Cartão';
+    } else if (metodo === 'local') {
+        document.getElementById('secaoLocal').classList.remove('d-none');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Confirmar Agendamento';
+    } else {
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = 'Selecione o pagamento';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- SELEÇÃO DE ELEMENTOS ---
     const btnLupaMobile = document.getElementById('btn-lupa-mobile');
@@ -67,6 +222,80 @@ document.addEventListener('DOMContentLoaded', () => {
     const bModal = modalElement ? new bootstrap.Modal(modalElement) : null;
     const formAgendamento = document.getElementById('formAgendamento');
     const statusPagamento = document.getElementById('statusPagamento');
+
+    // --- PAGAMENTO: Event Listeners ---
+    const metodoPagamento = document.getElementById('metodoPagamento');
+    if (metodoPagamento) {
+        metodoPagamento.addEventListener('change', (e) => {
+            alternarSecaoPagamento(e.target.value);
+        });
+    }
+
+    const cartaoNumero = document.getElementById('cartaoNumero');
+    const cartaoNome = document.getElementById('cartaoNome');
+    const cartaoValidade = document.getElementById('cartaoValidade');
+    const cartaoCvv = document.getElementById('cartaoCvv');
+
+    if (cartaoNumero) {
+        cartaoNumero.addEventListener('input', () => {
+            formatarNumeroCartao(cartaoNumero);
+            const btn = document.getElementById('btnConfirmarPagar');
+            if (btn && metodoPagamento.value === 'cartao') btn.disabled = !validarCartao();
+        });
+    }
+    if (cartaoNome) {
+        cartaoNome.addEventListener('input', () => {
+            const btn = document.getElementById('btnConfirmarPagar');
+            if (btn && metodoPagamento.value === 'cartao') btn.disabled = !validarCartao();
+        });
+    }
+    if (cartaoValidade) {
+        cartaoValidade.addEventListener('input', () => {
+            formatarValidadeCartao(cartaoValidade);
+            const btn = document.getElementById('btnConfirmarPagar');
+            if (btn && metodoPagamento.value === 'cartao') btn.disabled = !validarCartao();
+        });
+    }
+    if (cartaoCvv) {
+        cartaoCvv.addEventListener('input', () => {
+            formatarCvv(cartaoCvv);
+            const btn = document.getElementById('btnConfirmarPagar');
+            if (btn && metodoPagamento.value === 'cartao') btn.disabled = !validarCartao();
+        });
+    }
+
+    const btnCopiarPix = document.getElementById('btnCopiarPix');
+    if (btnCopiarPix) {
+        btnCopiarPix.addEventListener('click', () => {
+            const pixInput = document.getElementById('pixCopiaCola');
+            if (pixInput) {
+                navigator.clipboard.writeText(pixInput.value).then(() => {
+                    btnCopiarPix.innerHTML = '<i class="bi bi-check-lg"></i>';
+                    setTimeout(() => { btnCopiarPix.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000);
+                }).catch(() => {
+                    pixInput.select();
+                    document.execCommand('copy');
+                    btnCopiarPix.innerHTML = '<i class="bi bi-check-lg"></i>';
+                    setTimeout(() => { btnCopiarPix.innerHTML = '<i class="bi bi-clipboard"></i>'; }, 2000);
+                });
+            }
+        });
+    }
+
+    // Reset payment on modal close
+    if (modalElement) {
+        modalElement.addEventListener('hidden.bs.modal', () => {
+            clearInterval(timerPixInterval);
+            document.querySelectorAll('.payment-section').forEach(s => s.classList.add('d-none'));
+            if (metodoPagamento) metodoPagamento.value = '';
+            ['cartaoNumero', 'cartaoNome', 'cartaoValidade', 'cartaoCvv'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) { el.value = ''; el.required = false; }
+            });
+            const btnSubmit = document.getElementById('btnConfirmarPagar');
+            if (btnSubmit) { btnSubmit.disabled = true; btnSubmit.textContent = 'Selecione o pagamento'; }
+        });
+    }
 
     // Troca entre Modais e força a aba correta
     document.querySelectorAll('.abrir-cadastro').forEach(link => {
@@ -283,55 +512,110 @@ document.addEventListener('DOMContentLoaded', () => {
     if(formAgendamento) {
         formAgendamento.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btnSubmit = formAgendamento.querySelector('button[type="submit"]');
+            const btnSubmit = document.getElementById('btnConfirmarPagar');
+            if (!btnSubmit) return;
+            const metodo = document.getElementById('metodoPagamento').value;
+
             btnSubmit.disabled = true;
-            btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Processando...';
-            
-            setTimeout(() => {
-                statusPagamento.innerHTML = '<b class="text-success">Pagamento Aprovado!</b>';
+
+            if (metodo === 'cartao') {
+                // Simulacao de processamento de cartao
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Validando cartão...';
+                statusPagamento.innerHTML = '<span class="text-muted"><i class="bi bi-shield-lock"></i> Verificando dados do cartão...</span>';
+
                 setTimeout(() => {
-                    // Salvar agendamento no localStorage do usuario
-                    const usuarioAtivo = JSON.parse(localStorage.getItem('usuario_logado'));
-                    if (usuarioAtivo && usuarioAtivo.tipo === 'cliente') {
-                        const chave = `agendamentos_${usuarioAtivo.email}`;
-                        const agendamentos = JSON.parse(localStorage.getItem(chave)) || [];
-                        agendamentos.push({
-                            salao: document.getElementById('modalAgendamentoLabel').innerText.replace('Agendar em: ', ''),
-                            data: document.getElementById('dataAgendamento').value,
-                            hora: document.getElementById('horaAgendamento').value,
-                            pagamento: document.getElementById('metodoPagamento').value,
-                            status: 'confirmado',
-                            criadoEm: new Date().toISOString()
-                        });
-                        localStorage.setItem(chave, JSON.stringify(agendamentos));
-                    }
+                    statusPagamento.innerHTML = '<span class="text-muted"><i class="bi bi-arrow-repeat"></i> Processando pagamento...</span>';
+                    setTimeout(() => {
+                        const numCartao = document.getElementById('cartaoNumero').value;
+                        const ultimos4 = numCartao.replace(/\s/g, '').slice(-4);
+                        const parcelas = document.getElementById('cartaoParcelas').value;
+                        statusPagamento.innerHTML = `<b class="text-success"><i class="bi bi-check-circle-fill"></i> Pagamento aprovado!</b><br><small class="text-muted">Cartão final ${ultimos4} • ${parcelas}x</small>`;
+                        finalizarAgendamento(metodo, btnSubmit);
+                    }, 1500);
+                }, 1500);
 
-                    if(bModal) bModal.hide();
-                    formAgendamento.reset();
-                    statusPagamento.innerHTML = '';
-                    btnSubmit.disabled = false;
-                    btnSubmit.innerText = 'Confirmar e Pagar';
-                    alert("Sucesso! Agendamento confirmado.");
+            } else if (metodo === 'pix') {
+                // Simulacao de confirmacao Pix
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Aguardando pagamento...';
+                statusPagamento.innerHTML = '<span class="text-muted"><i class="bi bi-clock"></i> Verificando pagamento Pix...</span>';
 
-                    // Solicitar permissao de notificacao apos agendar
-                    if ('Notification' in window && Notification.permission === 'default') {
-                        setTimeout(() => {
-                            if (confirm('Deseja ativar notificacoes para receber lembretes do seu agendamento?')) {
-                                Notification.requestPermission().then(perm => {
-                                    if (perm === 'granted') {
-                                        const badge = document.getElementById('badge-notificacao');
-                                        if (badge) badge.classList.remove('d-none');
-                                        verificarAgendamentosProximos();
-                                    }
-                                });
-                            }
-                        }, 500);
-                    } else if ('Notification' in window && Notification.permission === 'granted') {
-                        verificarAgendamentosProximos();
-                    }
-                }, 2000);
-            }, 1500);
+                setTimeout(() => {
+                    statusPagamento.innerHTML = '<b class="text-success"><i class="bi bi-check-circle-fill"></i> Pix confirmado!</b>';
+                    clearInterval(timerPixInterval);
+                    finalizarAgendamento(metodo, btnSubmit);
+                }, 2500);
+
+            } else if (metodo === 'local') {
+                btnSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Confirmando...';
+                statusPagamento.innerHTML = '<span class="text-muted">Registrando agendamento...</span>';
+
+                setTimeout(() => {
+                    statusPagamento.innerHTML = '<b class="text-success"><i class="bi bi-check-circle-fill"></i> Agendamento confirmado!</b><br><small class="text-muted">Pagamento será feito no local</small>';
+                    finalizarAgendamento(metodo, btnSubmit);
+                }, 1500);
+            }
         });
+    }
+
+    function finalizarAgendamento(metodo, btnSubmit) {
+        setTimeout(() => {
+            // Salvar agendamento no localStorage do usuario
+            const usuarioAtivo = JSON.parse(localStorage.getItem('usuario_logado'));
+            if (usuarioAtivo && usuarioAtivo.tipo === 'cliente') {
+                const chave = `agendamentos_${usuarioAtivo.email}`;
+                const agendamentos = JSON.parse(localStorage.getItem(chave)) || [];
+
+                const detalhePagamento = {};
+                if (metodo === 'cartao') {
+                    const numCartao = document.getElementById('cartaoNumero').value;
+                    detalhePagamento.tipo = 'cartao';
+                    detalhePagamento.final = numCartao.replace(/\s/g, '').slice(-4);
+                    detalhePagamento.parcelas = document.getElementById('cartaoParcelas').value;
+                } else if (metodo === 'pix') {
+                    detalhePagamento.tipo = 'pix';
+                    detalhePagamento.chave = document.getElementById('pixCopiaCola').value;
+                } else {
+                    detalhePagamento.tipo = 'local';
+                }
+
+                agendamentos.push({
+                    salao: document.getElementById('modalAgendamentoLabel').innerText.replace('Agendar em: ', ''),
+                    data: document.getElementById('dataAgendamento').value,
+                    hora: document.getElementById('horaAgendamento').value,
+                    pagamento: metodo,
+                    detalhePagamento: detalhePagamento,
+                    status: 'confirmado',
+                    criadoEm: new Date().toISOString()
+                });
+                localStorage.setItem(chave, JSON.stringify(agendamentos));
+            }
+
+            if(bModal) bModal.hide();
+            formAgendamento.reset();
+            statusPagamento.innerHTML = '';
+            clearInterval(timerPixInterval);
+            document.querySelectorAll('.payment-section').forEach(s => s.classList.add('d-none'));
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = 'Selecione o pagamento';
+            alert("Sucesso! Agendamento confirmado.");
+
+            // Solicitar permissao de notificacao apos agendar
+            if ('Notification' in window && Notification.permission === 'default') {
+                setTimeout(() => {
+                    if (confirm('Deseja ativar notificacoes para receber lembretes do seu agendamento?')) {
+                        Notification.requestPermission().then(perm => {
+                            if (perm === 'granted') {
+                                const badge = document.getElementById('badge-notificacao');
+                                if (badge) badge.classList.remove('d-none');
+                                verificarAgendamentosProximos();
+                            }
+                        });
+                    }
+                }, 500);
+            } else if ('Notification' in window && Notification.permission === 'granted') {
+                verificarAgendamentosProximos();
+            }
+        }, 2000);
     }
 
     // --- FAVORITAR SALAO ---
