@@ -250,6 +250,28 @@ html, body {
     transition: all 0.3s ease;
 }
 
+/* --- SIMULACAO DE PAGAMENTO --- */
+.payment-section {
+    margin-bottom: 12px;
+    animation: fadeInPayment 0.3s ease;
+}
+@keyframes fadeInPayment {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.payment-section .card {
+    border: 1px solid #e9ecef !important;
+}
+#qrCodePix {
+    display: block;
+    image-rendering: pixelated;
+}
+#btnConfirmarPagar:disabled {
+    background-color: #ccc !important;
+    border-color: #ccc !important;
+    cursor: not-allowed;
+}
+
 /* --- FORCA DA SENHA --- */
 .password-strength { margin-top: 4px; }
 .strength-bars { height: 4px; }
